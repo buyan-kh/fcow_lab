@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DecisionRecord from '@/components/DecisionRecord';
 import DiscoveryPipeline from '@/components/DiscoveryPipeline';
@@ -177,7 +177,7 @@ export default function Home() {
               <SheetTrigger asChild><Button variant="outline" size="sm">Menu</Button></SheetTrigger>
               <SheetContent side="left">
                 <SheetHeader><SheetTitle>Frontier Bio</SheetTitle><SheetDescription>Research workspace navigation</SheetDescription></SheetHeader>
-                <div className="mobile-nav-list">{sections.map((section) => <Button key={section.name} variant={activeSection === section.name ? 'secondary' : 'ghost'} onClick={() => selectSection(section.name)}>{section.name}</Button>)}</div>
+                <div className="mobile-nav-list">{sections.map((section) => <SheetClose asChild key={section.name}><Button variant={activeSection === section.name ? 'secondary' : 'ghost'} onClick={() => selectSection(section.name)}>{section.name}</Button></SheetClose>)}</div>
               </SheetContent>
             </Sheet>
           </div>
@@ -229,7 +229,7 @@ export default function Home() {
             <TabsContent value="Development" className="workspace-tab-content"><div className="section-heading"><div><p className="workspace-kicker">From mechanism to medicine</p><h2>Drug discovery operating path</h2><p>Each stage opens only when the prior uncertainty is resolved.</p></div><Badge variant="outline">Program map</Badge></div><DiscoveryPipeline stages={decisionFlow as { label: string; caption: string; status: 'complete' | 'active' | 'next' }[]} /><DecisionRecord {...decisionRecord} /></TabsContent>
           </Tabs>
 
-          <section className="decision-record-wrap"><DecisionRecord {...decisionRecord} /></section>
+          {activeSection === 'Overview' ? <section className="decision-record-wrap"><DecisionRecord {...decisionRecord} /></section> : null}
 
           <section className="prompt-section"><div className="prompt-heading"><div><p className="workspace-kicker">Ask the program</p><h2>Inspect the reasoning before you commit capital.</h2></div><span>Decision context stays attached to the program record.</span></div><div className="prompt-form"><Input value={prompt} onChange={(event) => setPrompt(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') submitPrompt(); }} placeholder="Ask why this experiment is ranked first..." /><Button onClick={() => submitPrompt()}>Ask</Button></div><div className="prompt-suggestions"><button type="button" onClick={() => submitPrompt('why is this the highest-value experiment?')}>Why is this the highest-value experiment?</button><button type="button" onClick={() => submitPrompt('what evidence would change the recommendation?')}>What evidence would change the recommendation?</button></div>{response ? <div className="prompt-response"><div><p className="workspace-kicker">Program answer</p><h3>{response.title}</h3><p>{response.body}</p><div className="response-chips">{response.chips.map((chip) => <Badge variant="secondary" key={chip}>{chip}</Badge>)}</div></div><Button variant="ghost" size="sm" onClick={() => setResponse(null)}>Dismiss</Button></div> : null}</section>
           <footer className="workspace-footer"><span>Frontier Bio · internal research system</span><span>Decision record v0.1 · {dateLabel}</span></footer>

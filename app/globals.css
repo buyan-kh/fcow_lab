@@ -1858,6 +1858,9 @@ body {
 .workspace-tabs { margin-top: 42px; }
 .workspace-tabs > [data-slot='tabs-list'] { width: 100%; justify-content: flex-start; gap: 6px; border-bottom: 1px solid var(--line-strong); padding: 0; }
 .workspace-tabs [data-slot='tabs-trigger'] { flex: 0 0 auto; min-height: 42px; padding: 0 14px; color: var(--ink-3); font-size: 15px; }
+.workspace-tabs [data-slot='tabs-trigger'] { border-color: transparent; }
+.workspace-tabs [data-slot='tabs-trigger']:focus:not(:focus-visible) { outline: none; box-shadow: none; }
+.workspace-tabs [data-slot='tabs-trigger']:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; box-shadow: none; }
 .workspace-tabs [data-slot='tabs-trigger'][data-active] { color: var(--ink); }
 .workspace-tab-content { display: grid; gap: 22px; padding-top: 30px; }
 .decision-banner { display: flex; align-items: flex-start; justify-content: space-between; gap: 26px; border: 1px solid var(--line-strong); background: var(--surface); padding: 28px 30px; box-shadow: var(--shadow-card); }

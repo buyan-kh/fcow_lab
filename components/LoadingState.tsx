@@ -75,7 +75,7 @@ export default function LoadingState({
   label,
   variant = "Drive",
   /** the meme feed for the Surfer variant; drop the file in /public to light it up */
-  videoSrc = "/subway-surfers.mp4",
+  videoSrc = "/analysis-result.mp4",
 }: {
   label?: string;
   variant?: string;

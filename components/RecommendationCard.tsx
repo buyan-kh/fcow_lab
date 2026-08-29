@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { LoadingState } from './LoadingState';
+import LoadingState from './LoadingState';
 
 export function RecommendationCard({ loading, queued, dismissed, onQueue, onDismiss, onRestore }: { loading: boolean; queued: boolean; dismissed: boolean; onQueue: () => void; onDismiss: () => void; onRestore: () => void }) {
   const [alternatives, setAlternatives] = useState(false);

@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Frontier Bio — Personal Lab',
-  description: 'A local, research-only personal health lab for safe behavior experiments and reviewable learning.',
+  title: 'AX014 — UC treatment failure study',
+  description: 'Local control panel for the reproducible AX014 ulcerative colitis treatment failure study.',
 };
 
 export default function RootLayout({

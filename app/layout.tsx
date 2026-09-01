@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Frontier Bio — Genome to Mechanism',
-  description: 'Privacy-first synthetic genomic research and therapeutic hypothesis workspace.',
+  title: 'Frontier Bio — Personal Lab',
+  description: 'A local, research-only personal health lab for safe behavior experiments and reviewable learning.',
 };
 
 export default function RootLayout({

@@ -153,7 +153,7 @@ export type EvidenceLink = { title: string; source: string; url: string; scope: 
 
 - [ ] **Step 5: Implement pure comparison/report helpers.** In `lib/lab/analysis.ts`, add `averageSleepMetric`, `compareSleepPeriods`, `recommendDisposition`, and `buildSleepReport`. Round numeric deltas to one decimal. Use deterministic thresholds only for product behavior: choose `keep` when sleep duration increases by at least 0.3 hours and sleep quality does not fall; choose `modify` when the result is mixed or fewer than seven intervention days are logged; choose `stop` only when sleep quality and morning energy both decline. The explanation must say “synthetic observation” or “personal observation,” include uncertainty, and never use diagnosis/treatment language.
 
-- [ ] **Step 6: Add source-backed educational links.** Create `lib/lab/evidence.ts` with links for general sleep education (for example, an official public-health sleep-duration page and an official sleep-hygiene page). Store each URL, source title, scope, and `fixture: true`; do not fetch these sources at runtime. The UI may link out when the user chooses, but the local app must not transmit personal data.
+- [ ] **Step 6: Add source-backed educational links.** Create `lib/lab/evidence.ts` with these exact official educational links: CDC, “About Sleep and Sleep Health,” `https://www.cdc.gov/sleep/about/index.html`; and NHLBI, “Sleep Deprivation and Deficiency,” `https://www.nhlbi.nih.gov/health/sleep-deprivation`. Store each URL, source title, scope, and `fixture: true`; do not fetch these sources at runtime. The UI may link out when the user chooses, but the local app must not transmit personal data.
 
 - [ ] **Step 7: Run the focused test to prove it passes.**
 
@@ -175,7 +175,7 @@ git commit -m "feat: model sleep experiment proof loop"
 - Modify: `components/lab/PersonalLabWorkspace.tsx`
 - Modify: `app/globals.css`
 
-- [ ] **Step 1: Define flow state and navigation tests before UI implementation.** Add a focused component test if the project test setup supports DOM rendering; otherwise document the browser assertions in Task 5. The required states are `goal`, `baseline`, `intervention`, `checkin`, `report`. The state must retain records in React memory only and must not call `fetch`, `XMLHttpRequest`, `sendBeacon`, `WebSocket`, `localStorage`, or `sessionStorage`.
+- [ ] **Step 1: Define flow state and navigation behavior before UI implementation.** The current project has no DOM test harness, so cover these UI transitions in the browser checklist in Task 5 rather than adding a new testing dependency. The required states are `goal`, `baseline`, `intervention`, `checkin`, `report`. The state must retain records in React memory only and must not call `fetch`, `XMLHttpRequest`, `sendBeacon`, `WebSocket`, `localStorage`, or `sessionStorage`.
 
 - [ ] **Step 2: Render the goal state.** In `SleepWellnessFlow.tsx`, show three sleep-specific goal choices—duration, timing, and quality—using shadcn `Card` or plain buttons with neutral selected styling. Continue only after a goal is selected. Copy must say that the goal is a tracking question, not a diagnosis or outcome promise.
 

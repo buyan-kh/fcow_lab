@@ -31,3 +31,4 @@ Add typed `lib/lab` domain, deterministic fixtures, and a client-side `PersonalL
 - The UI labels fixture data and safety boundaries at the point of use.
 - Existing genome tests and Company mode remain intact.
 - The visual system never uses blue left rails, tinted callout cards, or decorative accent borders as hierarchy. Use typography, spacing, and neutral rules instead.
+- Personal Wellness is the only functional mode until its sleep experiment loop is validated. Explore and Clinical Navigation remain explicit placeholders; therapeutic discovery stays a later governed population-level layer.

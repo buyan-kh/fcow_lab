@@ -64,3 +64,32 @@ The exact split, metrics, baseline, model settings, and interpretation rules are
 ## Interpretation boundary
 
 An observed expression pattern is not a mechanism. A model score is not a target, drug, diagnosis, or treatment recommendation. If the fixed holdout result is weak or unstable, the report will say so. Independent replication is required before AX014 spends on a biological experiment.
+
+## Independent replication: GSE206285
+
+The locked replication uses GEO GSE206285, an independent ustekinumab UC cohort. It is restricted to active ustekinumab baseline samples with the source-defined week-8 mucosal-healing label; placebo, healthy controls, post-treatment samples, and missing labels are excluded without relabeling.
+
+Download the public files:
+
+```bash
+mkdir -p research/uc_failure_study/results/source_data/replication_gse206285
+curl -L --fail --silent --show-error https://ftp.ncbi.nlm.nih.gov/geo/series/GSE206nnn/GSE206285/soft/GSE206285_family.soft.gz -o research/uc_failure_study/results/source_data/replication_gse206285/GSE206285_family.soft.gz
+curl -L --fail --silent --show-error https://ftp.ncbi.nlm.nih.gov/geo/series/GSE206nnn/GSE206285/matrix/GSE206285_series_matrix.txt.gz -o research/uc_failure_study/results/source_data/replication_gse206285/GSE206285_series_matrix.txt.gz
+```
+
+Inspect and run the exact GSE14580 baseline models:
+
+```bash
+python3 research/uc_failure_study/src/inspect_replication.py \
+  --soft research/uc_failure_study/results/source_data/replication_gse206285/GSE206285_family.soft.gz \
+  --matrix research/uc_failure_study/results/source_data/replication_gse206285/GSE206285_series_matrix.txt.gz \
+  --out research/uc_failure_study/results/replication_gse206285_inspection.json
+
+uv run --with numpy==2.4.6 --with pandas==3.0.5 --with scipy==1.17.1 --with scikit-learn==1.9.0 \
+  python research/uc_failure_study/src/run_replication.py \
+  --soft research/uc_failure_study/results/source_data/replication_gse206285/GSE206285_family.soft.gz \
+  --matrix research/uc_failure_study/results/source_data/replication_gse206285/GSE206285_series_matrix.txt.gz \
+  --out research/uc_failure_study/results/replication_gse206285
+```
+
+The eligibility screen found 358 labeled active-treatment baseline samples (56 responders, 302 nonresponders), 54,715 probes, no matrix missing values, no duplicate samples/patients, and no metadata/matrix ID mismatch. The generated report is `replication_gse206285_report.md`.

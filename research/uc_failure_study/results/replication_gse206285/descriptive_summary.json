@@ -1,0 +1,34 @@
+{
+  "active_baseline_cohort": {
+    "nonresponder_count": 302,
+    "patient_count": 358,
+    "responder_count": 56,
+    "sample_count": 358,
+    "sample_types": {
+      "colon": 358
+    },
+    "treatment": "ustekinumab",
+    "visits": {
+      "WEEK I-0": 358
+    }
+  },
+  "active_baseline_missing_response": 6,
+  "baseline_count": 568,
+  "control_sample_count": 18,
+  "dataset": "GSE206285",
+  "groups": {
+    "nonresponder": 459,
+    "responder": 83,
+    "unknown_or_unusable": 26
+  },
+  "matrix_missing_values": 0,
+  "matrix_probes": 54715,
+  "matrix_samples": 568,
+  "metadata_sample_count": 568,
+  "treatment_counts": {
+    "placebo": 186,
+    "unknown": 18,
+    "ustekinumab": 364
+  },
+  "uc_sample_count": 550
+}

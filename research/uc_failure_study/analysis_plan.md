@@ -23,7 +23,7 @@ Use GSE14580 baseline UC samples only. The unit is one patient with one pre-trea
 
 ## Split and metrics
 
-Use `train_test_split(test_size=0.25, stratify=response, random_state=7)` over patient IDs. The split is fixed before model fitting and is never tuned against. The primary metric is balanced accuracy because the responder classes are imbalanced (8 versus 16). Also report accuracy and ROC-AUC when both test classes are present. The majority-class baseline is computed on the same test split.
+Shuffle sorted patient IDs with `random.Random(7)`, assign `round(0.25 * n)` patients to test (at least one), and keep all samples from a patient together. The split is fixed before model fitting and is never tuned against; it is not stratified. The primary metric is balanced accuracy because the responder classes are imbalanced. Also report accuracy and ROC-AUC when both test classes are present. The majority-class baseline is computed on the same test split. The independent replication uses these exact rules.
 
 The logistic regression pipeline is: median imputation, variance filtering, top-50 ANOVA feature selection fit on training data only, standardization, and L2 logistic regression with `C=1.0` and `max_iter=2000`. The tree comparator is a `DecisionTreeClassifier(max_depth=2, min_samples_leaf=2, random_state=7)` with the same training-only feature selection. No hyperparameter search is performed.
 

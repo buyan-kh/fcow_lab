@@ -17,6 +17,8 @@ class SampleRecord:
     treatment: str | None
     response: str
     timing: str
+    sample_type: str | None = None
+    visit: str | None = None
 
 
 def _value(line: str) -> str:
@@ -32,29 +34,45 @@ def _patient_id(title: str) -> str:
 
 def _record(sample: dict[str, str]) -> SampleRecord:
     source = sample.get("source_name", "").lower()
-    response_raw = sample.get("response to infliximab", sample.get("response", "")).lower()
-    timing_raw = sample.get("before or after first infliximab treatment", sample.get("timing", "")).lower()
-    if response_raw == "yes":
+    disease_raw = sample.get("disease", sample.get("diagnosis", "unknown")).lower()
+    if "ulcerative colitis" in disease_raw or disease_raw == "uc":
+        disease = "UC"
+    elif "healthy" in disease_raw or disease_raw in {"control", "controls"}:
+        disease = "Control"
+    else:
+        disease = sample.get("disease", "unknown")
+    response_raw = sample.get(
+        "response to infliximab",
+        sample.get(
+            "wk6response",
+            sample.get("mucosal healing at week 8", sample.get("response", "")),
+        ),
+    ).lower()
+    timing_raw = sample.get("before or after first infliximab treatment", sample.get("visit", sample.get("timing", ""))).lower()
+    if response_raw in {"yes", "y"}:
         response = "responder"
-    elif response_raw == "no":
+    elif response_raw in {"no", "n"}:
         response = "nonresponder"
     else:
         response = "unknown_or_unusable"
-    if "before first" in timing_raw:
+    if "before first" in timing_raw or "week 0" in timing_raw or "week i-0" in timing_raw or "baseline" in timing_raw:
         timing = "baseline"
-    elif "after first" in timing_raw:
+    elif "after first" in timing_raw or "week 6" in timing_raw or "week 8" in timing_raw:
         timing = "post_treatment"
     else:
         timing = "unknown"
-    treatment = "infliximab" if "infliximab" in source or "infliximab" in sample.get("treatment", "").lower() else None
+    treatment_raw = sample.get("treatment", "").lower()
+    treatment = next((name for name in ("infliximab", "golimumab", "ustekinumab", "placebo") if name in source or name in treatment_raw), None)
     return SampleRecord(
         sample_id=sample["sample_id"],
         title=sample["title"],
-        patient_id=_patient_id(sample["title"]),
-        disease=sample.get("disease", "unknown"),
+        patient_id=sample.get("subject", sample.get("donor id", _patient_id(sample["title"]))),
+        disease=disease,
         treatment=treatment,
         response=response,
         timing=timing,
+        sample_type=sample.get("tissue") or sample.get("source_name"),
+        visit=sample.get("visit"),
     )
 
 

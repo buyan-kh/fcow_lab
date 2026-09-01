@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Frontier Bio — Evidence Console',
-  description: 'AI-guided decision support for drug discovery programs.',
+  title: 'Frontier Bio — Genome to Mechanism',
+  description: 'Privacy-first synthetic genomic research and therapeutic hypothesis workspace.',
 };
 
 export default function RootLayout({

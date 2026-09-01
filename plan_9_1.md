@@ -1,395 +1,339 @@
-# AX014 Therapeutic Discovery Engine Implementation Plan
+# AX014 Drug Discovery Engine v0.1 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> For agentic workers: REQUIRED SUB-SKILL: Use executing-plans or subagent-driven-development. Steps use checkbox syntax for tracking.
 
-**Goal:** Re-center the product on AX014’s internal AI-native pharmaceutical discovery engine and ship one deterministic, reviewable research-program loop from disease mechanism to experiment decision.
+**Goal:** Repurpose the app into AX014’s internal research control room and prove one decision-critical capability: identifying which disease mechanisms deserve real experiments and capital.
 
-**Architecture:** The primary workspace is a research command center, not a consumer wellness app. A typed local domain models a research program, evidence claims, hypotheses, proposed experiment, synthetic result ingestion, belief update, and human review decision. The physical lab boundary is explicit: AX014 can propose and ingest an experiment result, but the prototype never claims that a lab, CRO, patient, molecule, or clinical program actually exists or ran. Existing wellness and legacy cockpit surfaces remain reachable only as secondary prototypes until the discovery loop is validated.
+**Architecture:** AX014 is an AI-native drug discovery company that discovers and owns therapeutic programs. The first slice is deterministic local infrastructure: disease, target, mechanism, public evidence, available experiments, budget, and timeline go in; target evidence, mechanism risks, conflicts, missing data, a falsifying experiment, therapeutic opportunity, and a Go/Pause/Kill research disposition come out. The prototype never claims physical execution, never invents patients or outcomes, and never presents personal treatment advice. Consumer wellness, personal DNA, fake patient cases, fake AX014 biology, and mock therapeutic results are removed from the primary path.
 
-**Tech Stack:** Next.js/Vinext, React 19, TypeScript, Vitest, Tailwind v4, existing shadcn Button/Card/Badge/Input/Separator primitives.
+**Tech Stack:** Next.js/Vinext, React 19, TypeScript, Vitest, Tailwind v4, and existing shadcn Button/Card/Badge/Input/Separator primitives.
 
 ---
 
-## Product contract
+## Company contract
 
-AX014 is an AI-native pharmaceutical company and research lab. Its long-term loop is:
+The AX014 loop is:
 
-```text
-human biology
-  → disease mechanism
-  → target hypothesis
-  → therapeutic research hypothesis
-  → experiment plan
-  → lab or CRO execution
-  → measured result
-  → belief update
-  → candidate advance or kill decision
-  → proprietary biological evidence
+```
+disease biology
+  ↓ causal target hypothesis
+  ↓ mechanism validation
+  ↓ therapeutic design
+  ↓ experiment selection
+  ↓ legitimate lab or CRO execution
+  ↓ measured result
+  ↓ proprietary data
+  ↓ better models
+  ↓ therapeutic program
 ```
 
-The first functional proof must make one serious research decision legible:
+The first artifact is AX014 Drug Discovery Engine v0.1.
 
-```text
-Research question
-  → disease and target map
-  → source-backed evidence
-  → mechanism hypothesis
-  → therapeutic research hypothesis
-  → falsifiable experiment plan
-  → synthetic result ingestion
-  → updated confidence and uncertainty
-  → advance / revise / kill recommendation
-  → Markdown and JSON research report
+Inputs:
+
+```
+Disease
+Target
+Mechanism
+Public evidence
+Available experiments
+Budget
+Timeline
 ```
 
-This is a research workflow for AX014 scientists and decision-makers. It must not present a medicine to an individual, diagnose a patient, prescribe a treatment, recommend dosage, or imply that an experiment was physically executed. Every synthetic claim, result, and hypothesis is visibly labeled as fixture data or inference.
+Outputs:
 
-The first program fixture is `AX014-IL6R-001`, an illustrative inflammatory-disease target program retained only as a deterministic synthetic demonstration. It is not a real AX014 asset, clinical program, molecule, patient cohort, or therapeutic claim.
+```
+Target evidence
+Mechanism risks
+Conflicting data
+Missing data
+Best falsifying experiment
+Therapeutic opportunity
+Go, pause, or kill recommendation
+```
 
-The sleep experiment implementation is demoted to a later consumer access surface. It is not the default product experience and must not appear in the primary research workspace.
+A recommendation is a program-level research disposition requiring human review. It is not a diagnosis, prescription, dosage, patient risk claim, or individual drug recommendation.
 
-## Domain behavior and labels
+## Disease and modality selection gate
 
-Every visible evidence item uses one of these labels:
+No disease-specific production fixture is added until the founder selects one disease area and one initial modality. The decision record must answer:
 
-- `Verified source` — a real public URL supplied in the fixture contract.
-- `Synthetic fixture` — deterministic local demonstration data, not a real study or result.
-- `Inference` — a reasoning step derived from displayed evidence; requires human review.
-- `Requires experiment` — a proposed test that has not been run.
-- `Unknown` — missing information that blocks a confident conclusion.
+1. Is there a tractable unmet need with a measurable biological endpoint?
+2. Is public human genetic, mechanistic, and clinical evidence deep enough to benchmark the engine?
+3. Can a legitimate lab or CRO run a falsifying experiment within twelve months?
+4. Does the modality fit the target biology, assay, manufacturing path, and available capital?
+5. What result would decisively kill the program?
 
-Allowed decision language is `Advance to review`, `Revise hypothesis`, or `Kill program`. These are research workflow dispositions, not clinical recommendations. Every disposition includes the evidence used, uncertainty, falsifier, and named human owner for the next review.
+Record the decision in docs/ax014_program_selection.md with the disease, modality, target rationale, benchmark sources, experiment cost range, timeline, and kill criteria. Until approval, the UI shows an unselected state and tests use only a Synthetic benchmark fixture. No fictional AX014 asset is shown as real.
+
+## Evidence policy
+
+Every claim carries one label: Verified source, Synthetic benchmark fixture, Inference, Requires experiment, or Unknown. Claims preserve source identifiers, URLs, excerpts, retrieval metadata, contradictions, and limitations. The engine must not fabricate molecules, patients, clinical outcomes, assay results, patents, partnerships, or completed experiments.
 
 ## File map
 
-- Create: `lib/ax014/domain.ts` — typed research-program, evidence, hypothesis, experiment, result, update, and report contracts.
-- Create: `lib/ax014/fixtures.ts` — deterministic synthetic AX014 program, claims, hypotheses, experiment, and result; no real patient or molecule data.
-- Create: `lib/ax014/analysis.ts` — pure confidence update, evidence coverage, disposition, and report builders.
-- Create: `lib/ax014/analysis.test.ts` — test-first coverage for deterministic math, uncertainty, labels, and forbidden medical/personal language.
-- Create: `lib/ax014/evidence.ts` — source-backed public links and fixture metadata; no runtime fetching.
-- Create: `components/ax014/Ax014ResearchWorkspace.tsx` — primary AX014 command-center shell and visible research-only boundary.
-- Create: `components/ax014/DiscoveryProgramFlow.tsx` — the complete program flow: question, map, evidence, hypotheses, experiment, result, update, report.
-- Modify: `app/page.tsx` — make `Ax014ResearchWorkspace` the default route and keep the existing cockpit as a secondary legacy surface.
-- Modify: `components/genome/CompanyMode.tsx` — relabel the preserved cockpit as secondary illustrative legacy mode without importing it into the new path.
-- Modify: `app/globals.css` — style the command center with neutral shadcn-based hierarchy; do not add blue left rails, tinted callout cards, decorative accent borders, gradients, or AI-slop section bars.
-- Create: `docs/ax014_discovery_engine_boundary.md` — document the pharma-company thesis, physical-loop boundary, synthetic fixture policy, and prohibited outputs.
-- Modify: `docs/product_reset.md` — replace the wellness-first product definition with the AX014 discovery-engine definition and stage sequencing.
+- Create: lib/ax014/domain.ts — typed discovery case, provenance, experiment, result, decision, and report contracts.
+- Create: lib/ax014/fixtures.ts — test-only synthetic benchmark case; no default production biology.
+- Create: lib/ax014/analysis.ts — pure evidence coverage, falsifier selection, and Go/Pause/Kill logic.
+- Create: lib/ax014/analysis.test.ts — deterministic tests and forbidden-output assertions.
+- Create: lib/ax014/evidence.ts — bounded source-record adapter; no runtime network calls in v0.1.
+- Create: components/ax014/Ax014ResearchWorkspace.tsx — primary control-room shell and boundary.
+- Create: components/ax014/DiscoveryEngineFlow.tsx — complete research workflow.
+- Modify: app/page.tsx — AX014 control room becomes the default route.
+- Modify: components/genome/ResearchWorkspace.tsx — remove from default path; retain only as historical prototype if needed.
+- Modify: components/genome/CompanyMode.tsx — label retained data as illustrative legacy fixture.
+- Modify: components/lab/PersonalLabWorkspace.tsx — remove from primary navigation.
+- Modify: app/globals.css — restrained light shadcn styling; no rails, tinted cards, gradients, or decorative accent bars.
+- Create: docs/ax014_discovery_engine_boundary.md — company and physical-loop boundary.
+- Create: docs/ax014_program_selection.md — disease/modality decision record.
+- Modify: docs/product_reset.md — remove wellness-first definition.
 
-### Task 1: Define the AX014 research domain and failing analysis tests
+### Task 1: Define the discovery-case contract and decision gate
 
 **Files:**
-- Create: `lib/ax014/domain.ts`
-- Create: `lib/ax014/fixtures.ts`
-- Create: `lib/ax014/analysis.ts`
-- Create: `lib/ax014/analysis.test.ts`
-- Create: `lib/ax014/evidence.ts`
+- Create: lib/ax014/domain.ts
+- Create: lib/ax014/fixtures.ts
+- Create: lib/ax014/evidence.ts
+- Create: lib/ax014/analysis.ts
+- Create: lib/ax014/analysis.test.ts
+- Create: docs/ax014_program_selection.md
 
-- [ ] **Step 1: Write failing tests for the decision loop.** Add these tests to `lib/ax014/analysis.test.ts`:
+- [ ] Step 1: Write failing tests for evidence coverage, Go/Pause/Kill disposition, report section order, physical-loop boundary, and forbidden personal/clinical language. Import analysis functions and fixture names that do not yet exist.
 
-```ts
-import { describe, expect, it } from 'vitest';
-import { buildResearchReport, computeBeliefUpdate, decideDisposition } from './analysis';
-import { demoAx014Program, demoEvidence, demoExperiment, demoResult } from './fixtures';
+- [ ] Step 2: Run the focused test.
 
-describe('AX014 discovery analysis', () => {
-  it('updates confidence deterministically from a synthetic result', () => {
-    const update = computeBeliefUpdate(demoAx014Program.mechanismHypothesis, demoResult);
-    expect(update.priorConfidence).toBe(0.54);
-    expect(update.posteriorConfidence).toBe(0.67);
-    expect(update.status).toBe('mixed evidence');
-    expect(update.sourceLabel).toBe('Synthetic fixture');
-  });
+Run: npm test -- lib/ax014/analysis.test.ts
 
-  it('selects a research disposition without clinical or personal claims', () => {
-    const update = computeBeliefUpdate(demoAx014Program.mechanismHypothesis, demoResult);
-    const disposition = decideDisposition(update, demoExperiment);
-    expect(['Advance to review', 'Revise hypothesis', 'Kill program']).toContain(disposition.action);
-    expect(disposition.explanation).toMatch(/research|experiment|uncertainty/i);
-    expect(disposition.explanation).not.toMatch(/patient|diagnos|prescription|dosage|treat you|take /i);
-  });
+Expected: FAIL because the AX014 modules do not exist.
 
-  it('builds a report with provenance, falsifier, and physical-lab boundary', () => {
-    const report = buildResearchReport(demoAx014Program, demoEvidence, demoExperiment, demoResult);
-    expect(report.sections.map((section) => section.title)).toEqual([
-      'Research question', 'Disease and target map', 'Evidence', 'Mechanism hypothesis',
-      'Therapeutic research hypothesis', 'Experiment plan', 'Result ingestion',
-      'Belief update', 'Decision', 'Limitations',
-    ]);
-    expect(report.boundary).toContain('physical experiment');
-    expect(report.claims.every((claim) => claim.sourceLabel)).toBe(true);
-    expect(JSON.stringify(report)).not.toMatch(/prescription|dosage|diagnose|personal risk/i);
-  });
-});
-```
-
-- [ ] **Step 2: Run the focused test and verify the missing API failure.**
-
-Run: `npm test -- lib/ax014/analysis.test.ts`
-
-Expected: FAIL because the AX014 domain, fixtures, and pure analysis functions do not exist yet.
-
-- [ ] **Step 3: Add the typed domain contracts.** Implement `lib/ax014/domain.ts` with these exported shapes:
+- [ ] Step 3: Add typed contracts to lib/ax014/domain.ts.
 
 ```ts
-export type EvidenceLabel = 'Verified source' | 'Synthetic fixture' | 'Inference' | 'Requires experiment' | 'Unknown';
-export type DispositionAction = 'Advance to review' | 'Revise hypothesis' | 'Kill program';
-export type ProgramStage = 'mechanism' | 'target' | 'therapeutic hypothesis' | 'experiment';
+export type ProvenanceLabel =
+  | 'Verified source'
+  | 'Synthetic benchmark fixture'
+  | 'Inference'
+  | 'Requires experiment'
+  | 'Unknown';
+
+export type DispositionAction = 'Go' | 'Pause' | 'Kill';
+export type Modality =
+  | 'small molecule'
+  | 'antibody'
+  | 'protein'
+  | 'cell therapy'
+  | 'nucleic acid'
+  | 'unselected';
+
+export type SourceRecord = {
+  id: string;
+  title: string;
+  url: string;
+  publisher: string;
+  retrievedAt: string;
+  label: 'Verified source' | 'Synthetic benchmark fixture';
+};
 
 export type EvidenceClaim = {
   id: string;
   statement: string;
-  label: EvidenceLabel;
-  sourceTitle: string;
-  sourceUrl: string;
+  provenance: ProvenanceLabel;
+  sourceIds: string[];
   excerpt: string;
   limitation: string;
-};
-
-export type MechanismHypothesis = {
-  id: string;
-  statement: string;
-  priorConfidence: number;
-  predictedReadout: string;
-  falsifier: string;
-  owner: string;
-};
-
-export type TherapeuticResearchHypothesis = {
-  id: string;
-  statement: string;
-  modalityClass: 'small molecule' | 'antibody' | 'protein' | 'cell therapy' | 'unknown';
-  intendedBiology: string;
-  constraints: string[];
-  label: 'Inference';
-};
-
-export type ResearchProgram = {
-  id: string;
-  code: string;
-  diseaseArea: string;
-  researchQuestion: string;
-  stage: ProgramStage;
-  target: string;
-  targetRationale: string;
-  mechanismHypothesis: MechanismHypothesis;
-  therapeuticHypothesis: TherapeuticResearchHypothesis;
-  uncertainties: string[];
 };
 
 export type ExperimentPlan = {
   id: string;
   title: string;
   objective: string;
-  model: 'cell assay' | 'human tissue model' | 'animal model' | 'clinical cohort' | 'unknown';
-  inputs: string[];
+  model: string;
+  costRange: string;
+  duration: string;
   readouts: string[];
   controls: string[];
   successCriteria: string[];
   falsifier: string;
-  executionStatus: 'proposed' | 'sent to lab' | 'result received';
-  label: 'Requires experiment';
+  provenance: 'Requires experiment';
+  status: 'Proposed' | 'Ready for human review';
+};
+
+export type DiscoveryCase = {
+  id: string;
+  disease: string;
+  target: string;
+  mechanism: string;
+  researchQuestion: string;
+  modality: Modality;
+  budget: string;
+  timeline: string;
+  evidence: EvidenceClaim[];
+  mechanismRisks: string[];
+  missingData: string[];
+  therapeuticOpportunity: string;
+  availableExperiments: ExperimentPlan[];
 };
 
 export type ExperimentResult = {
   experimentId: string;
-  receivedAt: string;
-  label: 'Synthetic fixture';
-  readouts: Array<{ name: string; observed: string; direction: 'supports' | 'mixed' | 'weakens' | 'unknown' }>;
-  controlCheck: string;
-  rawDataStored: false;
-  executionNote: string;
+  provenance: 'Synthetic benchmark fixture';
+  executionStatus: 'Not physically executed';
+  readouts: Array<{
+    name: string;
+    value: string;
+    interpretation: 'supports' | 'conflicts' | 'inconclusive';
+  }>;
+  controlStatus: 'Pass' | 'Fail' | 'Unknown';
+  limitation: string;
 };
 
-export type BeliefUpdate = {
-  priorConfidence: number;
-  posteriorConfidence: number;
-  status: 'supports' | 'mixed evidence' | 'weakens' | 'inconclusive';
-  rationale: string;
-  remainingUncertainty: string[];
-  sourceLabel: 'Synthetic fixture';
-};
-
-export type ResearchDisposition = {
+export type ResearchDecision = {
   action: DispositionAction;
-  explanation: string;
-  nextHumanReview: string;
+  label: 'Human review required';
+  reason: string;
+  nextQuestion: string;
   evidenceUsed: string[];
 };
 
-export type ResearchReportSection = { title: string; body: string; label: EvidenceLabel };
-export type ResearchReport = {
-  programId: string;
-  generatedAt: string;
-  sections: ResearchReportSection[];
-  claims: EvidenceClaim[];
-  beliefUpdate: BeliefUpdate;
-  disposition: ResearchDisposition;
+export type DiscoveryReport = {
+  caseId: string;
+  sections: Array<{
+    title: string;
+    body: string;
+    provenance: ProvenanceLabel;
+  }>;
+  decision: ResearchDecision;
   boundary: string;
 };
 ```
 
-- [ ] **Step 4: Add deterministic synthetic program fixtures.** Export `demoAx014Program`, `demoEvidence`, `demoExperiment`, and `demoResult` from `lib/ax014/fixtures.ts`. Use stable IDs, fixed strings, and a fixed timestamp. Every non-source claim must carry `Synthetic fixture`, `Inference`, or `Requires experiment`; do not include real patient records, DNA, clinical outcomes, compound names, dosages, or raw assay files.
+- [ ] Step 4: Export syntheticBenchmarkCase and syntheticBenchmarkResult from lib/ax014/fixtures.ts. Use neutral IDs, fixed values, and a fixed timestamp. This fixture is test-only and must never appear as an AX014 asset before program selection.
 
-- [ ] **Step 5: Implement pure analysis functions.** In `lib/ax014/analysis.ts`, add `computeBeliefUpdate`, `decideDisposition`, and `buildResearchReport`. Use explicit deterministic rules: confidence is clamped to `[0, 1]`, rounded to two decimals, and increased by `0.13` for a supporting readout, unchanged for mixed readouts, and decreased by `0.16` for a weakening readout. `Advance to review` requires posterior confidence `>= 0.65` and a passing control; `Kill program` requires posterior confidence `< 0.35` and a failed control; all other states are `Revise hypothesis`. The report must preserve provenance and include the physical-experiment boundary.
+- [ ] Step 5: Create lib/ax014/evidence.ts with a SourceAdapter contract that normalizes preloaded public records. v0.1 performs no network requests and reports missing IDs, stale timestamps, and adapter errors explicitly.
 
-- [ ] **Step 6: Add source-backed educational links without runtime requests.** Create `lib/ax014/evidence.ts` with official public source metadata only. The fixture can reference stable source pages such as Open Targets, PubMed, and ClinicalTrials.gov, but each displayed source must be labeled `Verified source` and include its URL. Do not fetch sources from the browser, send research inputs to an endpoint, or claim that a fixture is current evidence.
+- [ ] Step 6: Implement scoreEvidenceCoverage, selectFalsifyingExperiment, decideResearchDisposition, and buildDiscoveryReport in lib/ax014/analysis.ts. Go requires verified evidence coverage, a passing control, and a falsifier-ready experiment. Kill requires a failed control or a result that weakens the mechanism. All other states are Pause.
 
-- [ ] **Step 7: Run the focused test to verify the implementation.**
+- [ ] Step 7: Create docs/ax014_program_selection.md with the unselected state and the five selection questions. Do not name an approved disease or modality until the founder selects them.
 
-Run: `npm test -- lib/ax014/analysis.test.ts`
+- [ ] Step 8: Run the focused test, then commit.
 
-Expected: PASS with the deterministic confidence, disposition, report-section, and forbidden-language assertions.
+Run: npm test -- lib/ax014/analysis.test.ts
 
-- [ ] **Step 8: Commit the domain slice.**
+Expected: PASS.
 
 ```bash
-git add lib/ax014
-git commit -m "feat: model AX014 discovery decision loop"
+git add lib/ax014 docs/ax014_program_selection.md
+git commit -m "feat: define AX014 drug discovery engine contract"
 ```
 
-### Task 2: Build the AX014 research command center
+### Task 2: Build the AX014 research control room
 
 **Files:**
-- Create: `components/ax014/Ax014ResearchWorkspace.tsx`
-- Create: `components/ax014/DiscoveryProgramFlow.tsx`
-- Modify: `app/page.tsx`
-- Modify: `app/globals.css`
+- Create: components/ax014/Ax014ResearchWorkspace.tsx
+- Create: components/ax014/DiscoveryEngineFlow.tsx
+- Modify: app/page.tsx
+- Modify: app/globals.css
 
-- [ ] **Step 1: Define the local flow state.** `DiscoveryProgramFlow` must use only React memory with stages `question`, `map`, `evidence`, `mechanism`, `therapeutic`, `experiment`, `result`, `update`, and `report`. It must not call `fetch`, `XMLHttpRequest`, `sendBeacon`, `WebSocket`, `localStorage`, `sessionStorage`, or any upload/file-picker API.
+- [ ] Step 1: Use React memory only with stages select, question, target, evidence, mechanism, experiment, result, decision, and report. Do not use uploads, personal genomic inputs, device connectors, network requests, browser storage, or hidden model calls.
 
-- [ ] **Step 2: Render the AX014 header and boundary.** Show `AX014` as the company/lab name, `AI-native therapeutic discovery engine` as the descriptor, and a first-screen boundary stating: `Research workflow only. Synthetic demonstration data. No patient care, prescriptions, or claims that a physical experiment has run.` Use neutral borders and typography instead of colored rails or tinted cards.
+- [ ] Step 2: Render AX014, Drug Discovery Engine v0.1, and Internal research infrastructure on the first screen. Show: Synthetic benchmark only. No patient care. No claim that a physical experiment has run.
 
-- [ ] **Step 3: Render the research-question stage.** Show the synthetic program code, disease area, target, and question: `Does this target deserve a falsifiable mechanism experiment?` Require the user to press `Open program` before advancing. Display `Synthetic fixture` beside the program identity.
+- [ ] Step 3: Render the unselected program state with Disease, Target, Mechanism, Public evidence, Available experiments, Budget, and Timeline. Title it Select the first disease and modality. Do not display fictional AX014 biology.
 
-- [ ] **Step 4: Render the disease/target map and evidence stages.** Show disease biology, target rationale, uncertainty list, and evidence claims with their source label, source title, URL, excerpt, and limitation. Keep `Verified source`, `Synthetic fixture`, and `Inference` visually distinct using badges and text—not decorative color panels.
+- [ ] Step 4: Add an explicit Open synthetic benchmark action. Mark every benchmark claim and result with Synthetic benchmark fixture. Walk through research question, target evidence, mechanism risks, conflicting data, missing data, therapeutic opportunity, and candidate experiments.
 
-- [ ] **Step 5: Render mechanism and therapeutic research hypotheses.** Display the mechanism statement, prior confidence, predicted readout, falsifier, modality class, intended biology, and constraints. Use the exact label `Therapeutic research hypothesis`; do not phrase it as a drug recommendation or clinical treatment.
+- [ ] Step 5: Render the falsifying experiment plan with model, cost, duration, readouts, controls, success criteria, and falsifier. The action is Mark ready for human review; it must not imply ordering, funding, or completion.
 
-- [ ] **Step 6: Render the experiment plan.** Show objective, model, inputs, readouts, controls, success criteria, falsifier, and `Requires experiment`. The primary action is `Mark plan ready for lab review`; it must set a local status only and never imply that a lab or CRO was contacted.
+- [ ] Step 6: Add Load synthetic benchmark result. Display Not physically executed and explain that a legitimate lab or CRO measurement is required before any decision can be trusted.
 
-- [ ] **Step 7: Render synthetic result ingestion.** Show a readout table with the deterministic fixture result and a button labeled `Load synthetic result`. Once loaded, show `Synthetic fixture · result received` and an explicit note: `This result was not generated by a physical lab and must not be used as evidence of efficacy.` Provide `Review result` as the only next action.
+- [ ] Step 7: Render evidence coverage and exactly one Go, Pause, or Kill disposition with Human review required. Add Markdown and JSON downloads using local Blob objects only.
 
-- [ ] **Step 8: Render belief update and decision.** Call the pure analysis functions and show prior/posterior confidence, supporting/mixed/weakening readouts, remaining uncertainty, falsifier status, and one disposition: `Advance to review`, `Revise hypothesis`, or `Kill program`. Include a human-review owner and next decision. Do not display a candidate drug, dose, patient outcome, diagnosis, or treatment recommendation.
+- [ ] Step 8: Make Ax014ResearchWorkspace the default route in app/page.tsx. Keep historical genome and wellness surfaces out of primary navigation and label any retained link as legacy or prototype.
 
-- [ ] **Step 9: Render Markdown and JSON reports.** Once the report stage is visible, provide `Download Markdown report` and `Download JSON report`. Both downloads must contain typed synthetic program data, labels, provenance, uncertainty, and the physical-lab boundary. Use `Blob` and `URL.createObjectURL` locally; revoke the URL after download. Do not include raw personal data or raw uploaded bytes.
+- [ ] Step 9: Add ax014-* styles using light background, neutral rules, compact data tables, plain labels, and one primary action color. Avoid blue rails, tinted cards, gradients, oversized marketing copy, AI badges, and fake activity feeds.
 
-- [ ] **Step 10: Replace the default route.** Modify `app/page.tsx` so `Ax014ResearchWorkspace` renders by default. Keep the current legacy `CompanyMode` reachable through a secondary `Legacy cockpit` action. The sleep wellness workspace may remain in source for later consumer work but must not be imported into the default route.
+- [ ] Step 10: Run lint and tests.
 
-- [ ] **Step 11: Add restrained command-center styling.** Add `ax014-*` classes in `app/globals.css` with light background, readable type, 1px neutral rules, compact data tables, and one action color for primary buttons. Explicitly avoid blue vertical rails, tinted information cards, gradient backgrounds, oversized marketing copy, decorative AI badges, and new icon dependencies.
+Run: npm run lint && npm test
 
-- [ ] **Step 12: Run lint and tests.**
-
-Run: `npm run lint && npm test`
-
-Expected: ESLint passes and all existing plus AX014 tests pass.
-
-- [ ] **Step 13: Commit the command center.**
+Expected: clean lint and passing tests.
 
 ```bash
 git add app/page.tsx app/globals.css components/ax014
-git commit -m "feat: build AX014 research command center"
+git commit -m "feat: build AX014 research control room"
 ```
 
-### Task 3: Preserve secondary modes without diluting AX014
+### Task 3: Remove consumer and fictional-product paths
 
 **Files:**
-- Modify: `components/genome/CompanyMode.tsx`
-- Modify: `components/lab/PersonalLabWorkspace.tsx`
-- Modify: `components/lab/ModePlaceholder.tsx`
-- Modify: `app/globals.css`
+- Modify: components/lab/PersonalLabWorkspace.tsx
+- Modify: components/lab/SleepWellnessFlow.tsx
+- Modify: components/genome/ResearchWorkspace.tsx
+- Modify: components/genome/CompanyMode.tsx
+- Modify: app/page.tsx
 
-- [ ] **Step 1: Relabel the legacy cockpit honestly.** Change the preserved cockpit eyebrow and copy to `Legacy illustrative cockpit` and `Synthetic fixture data`. Keep its existing route and data isolated from `components/ax014`.
+- [ ] Step 1: Remove PersonalLabWorkspace and SleepWellnessFlow from app/page.tsx and every components/ax014 import. If retained, label them Consumer prototype — not AX014 core.
 
-- [ ] **Step 2: Demote the wellness surface.** Keep `PersonalLabWorkspace` available as a secondary `Consumer access prototype` route, but remove it from the AX014 primary navigation. Its safety boundary must continue to state that it is not medical advice and uses synthetic/local demo values only.
+- [ ] Step 2: Remove personal DNA, genome upload, patient record, and device-connector language from the AX014 path.
 
-- [ ] **Step 3: Keep future surfaces explicit.** If Explore or Clinical Navigation remains visible, use the exact placeholder statements `Coming next.`, `Synthetic demonstration only.`, and `No real medical records are processed.` Do not render fictional therapeutic programs in those placeholders.
+- [ ] Step 3: Remove demo diseases, demo genes, mock molecules, fake patients, fake clinical results, and fictional program progress from the primary control room. Retained historical fixtures stay outside components/ax014 and carry Legacy illustrative fixture.
 
-- [ ] **Step 4: Run an import and network guard check.**
+- [ ] Step 4: Preserve evidence review, hypothesis tracking, experiment planning, decision records, and program navigation with typed, provenance-labeled data.
 
-Run: `rg -n "SleepWellnessFlow|demoDiseases|demoEvidence|fetch\\(|XMLHttpRequest|sendBeacon|WebSocket|localStorage|sessionStorage|input[^>]+type=\\\"file\\\"" components/ax014 app/page.tsx`
+- [ ] Step 5: Run the primary-path guard.
+
+Run: rg -n 'PersonalLabWorkspace|SleepWellnessFlow|genome|demoDiseases|demoGenes|fake patient|mock therapeutic|fetch\\(|XMLHttpRequest|sendBeacon|WebSocket|localStorage|sessionStorage|type=\"file\"' app/page.tsx components/ax014
 
 Expected: no matches in the AX014 primary path.
 
-- [ ] **Step 5: Commit the secondary-mode cleanup.**
+- [ ] Step 6: Commit the cleanup.
 
 ```bash
-git add components/genome/CompanyMode.tsx components/lab/PersonalLabWorkspace.tsx components/lab/ModePlaceholder.tsx app/globals.css
-git commit -m "refactor: isolate secondary prototype surfaces"
+git add app/page.tsx components/lab components/genome
+git commit -m "refactor: remove consumer and fictional product paths"
 ```
 
-### Task 4: Document the AX014 company boundary and staged business path
+### Task 4: Document the company and twelve-month operating plan
 
 **Files:**
-- Create: `docs/ax014_discovery_engine_boundary.md`
-- Modify: `docs/product_reset.md`
+- Create: docs/ax014_discovery_engine_boundary.md
+- Modify: docs/product_reset.md
 
-- [ ] **Step 1: Document the company thesis.** State that AX014 builds AI systems that discover disease mechanisms, design therapeutic research hypotheses, select experiments, and learn from biological results until a validated medicine emerges. The platform is infrastructure for research programs; it is not primarily a wellness dashboard.
+- [ ] Step 1: State that AX014 discovers and owns therapeutic programs; software is internal infrastructure; value comes from evidence, patents, partnerships, licensing, royalties, medicines, and acquisition value.
 
-- [ ] **Step 2: Document the physical-loop requirement.** Include the sequence `AI hypothesis → experiment choice → lab/CRO execution → measurement → belief update → advance or kill`. State that the prototype can propose and ingest synthetic results but cannot claim physical execution, efficacy, safety, or clinical success.
+- [ ] Step 2: Document the mandatory loop: disease biology → causal target → mechanism validation → therapeutic design → experiment selection → legitimate lab/CRO execution → result ingestion → model update. Prohibit claims of physical execution when only synthetic data exists.
 
-- [ ] **Step 3: Document the staged business path.** Record: build the engine; create differentiated biological evidence; create or license a therapeutic program; partner for capital and development; retain ownership, milestones, royalties, or internal development; repeat across diseases and modalities. Consumer access is a later surface, not the company definition.
+- [ ] Step 3: Include the twelve-month sequence: choose disease; map biology and unmet need; build public target benchmark; select targets; identify dangerous uncertainty; design the cheapest falsifying experiment; engage a legitimate lab/CRO; generate real evidence; publish method and negative results; select modality; create a defensible program; pursue grants, investors, partnerships, or licensing.
 
-- [ ] **Step 4: Document prohibited outputs and fixture policy.** Prohibit diagnoses, personal risk claims, prescriptions, dosage, individual drug recommendations, invented patients, invented clinical outcomes, and fabricated lab execution. Require visible labels for all synthetic data and inferences.
+- [ ] Step 4: Prohibit consumer wellness recommendations, personal DNA analysis, diagnoses, patient risk claims, prescriptions, dosage, individual drug recommendations, fake patients, mock therapeutic results, invented patents, and invented lab execution.
 
-- [ ] **Step 5: Commit the documentation.**
+- [ ] Step 5: Commit the documentation.
 
 ```bash
 git add docs/ax014_discovery_engine_boundary.md docs/product_reset.md
-git commit -m "docs: define AX014 discovery engine boundary"
+git commit -m "docs: establish AX014 pharmaceutical company direction"
 ```
 
-### Task 5: Verify the complete AX014 discovery loop
+### Task 5: Verify AX014 Drug Discovery Engine v0.1
 
-**Files:**
-- No new source files unless a verification failure requires a targeted fix.
+- [ ] Step 1: Run npm test && npm run lint && npm run build. All tests must pass, lint must be clean, and the production build must complete. Report non-blocking Vinext warnings separately.
 
-- [ ] **Step 1: Run automated checks.**
+- [ ] Step 2: Start npm run dev -- --host 0.0.0.0 and confirm http://localhost:3000 serves the AX014 control room.
 
-Run: `npm test && npm run lint && npm run build`
+- [ ] Step 3: Browser-check: AX014 boundary; unselected disease/modality state; synthetic benchmark labels; source identifiers and limitations; mechanism risks and falsifier; experiment plan; Not physically executed result; Go/Pause/Kill decision; Markdown/JSON reports; no wellness, DNA, patient, molecule, or mock clinical result in the primary route; reusable evidence, hypothesis, experiment, decision, and program navigation.
 
-Expected: all tests pass, lint is clean, and the production build completes. Known Vinext Node deprecation or route-classification warnings may be reported separately if they do not fail the build.
+- [ ] Step 4: Inspect browser requests/logs while opening the benchmark, loading results, and downloading reports. Confirm zero network requests, no browser persistence, no file input, and no personal or clinical payload.
 
-- [ ] **Step 2: Start the development server.**
-
-Run: `npm run dev -- --host 0.0.0.0`
-
-Expected: the app is available at `http://localhost:3000`.
-
-- [ ] **Step 3: Manually verify the browser flow.** Confirm, in order:
-
-1. AX014 header and research-only boundary are visible on first load.
-2. Synthetic program opens with disease area, target, and research question.
-3. Disease/target map shows evidence labels, source links, limitations, and uncertainties.
-4. Mechanism and therapeutic research hypotheses are clearly marked as inference.
-5. Experiment plan shows controls, readouts, success criteria, falsifier, and `Requires experiment`.
-6. Synthetic result ingestion shows the non-physical-execution warning.
-7. Belief update changes confidence deterministically and exposes remaining uncertainty.
-8. Disposition is exactly one of `Advance to review`, `Revise hypothesis`, or `Kill program`.
-9. Markdown and JSON downloads contain labels, provenance, uncertainty, and boundary text.
-10. Legacy cockpit remains reachable as a secondary illustrative surface; no wellness UI appears in the AX014 primary flow.
-
-- [ ] **Step 4: Verify privacy and network behavior.** Use browser developer logs/network inspection and source search to confirm no request is made when advancing stages, loading the synthetic result, or downloading reports. Confirm there is no file input and no raw genome, patient, or clinical record data in the report payload.
-
-- [ ] **Step 5: Check the final diff and commit.**
-
-Run: `git diff --check && git status --short`
-
-Expected: no whitespace errors and a clean worktree after the final commit.
-
-```bash
-git log --oneline -6
-git push fcow_lab main
-```
-
-Expected: the AX014 discovery-engine commits are present on `fcow_lab/main`.
+- [ ] Step 5: Run git diff --check && git status --short, commit any targeted fixes, and push git push fcow_lab main. The final worktree must be clean and all AX014 commits must be present on fcow_lab/main.
 
 ## Self-review checklist
 
-- The default product is an AX014 research command center, not a wellness app.
-- The first proof is a falsifiable therapeutic research decision, not a consumer recommendation.
-- The physical lab/CRO loop is visible and never simulated as completed.
-- Synthetic fixtures are deterministic and visibly labeled.
-- Evidence claims retain source URLs, excerpts, and limitations.
-- Research hypotheses are disease/program level and never personalized to an individual.
-- The legacy cockpit and wellness prototype are secondary and isolated from the AX014 path.
-- Tests, lint, build, browser verification, privacy checks, and push are explicit deliverables.
+- AX014 is presented as a pharmaceutical company, not a consumer health app.
+- The primary capability selects experiments and capital-worthy mechanisms.
+- The physical biology loop is mandatory and never faked.
+- Disease and modality selection is an explicit founder decision gate.
+- Synthetic benchmark data is test-only or visibly labeled.
+- Evidence, hypotheses, experiments, decision records, and program navigation remain core.
+- Personal DNA, fake patients, fake AX014 biology, mock therapeutic results, and consumer wellness are removed from the primary path.
+- The first artifact is AX014 Drug Discovery Engine v0.1.

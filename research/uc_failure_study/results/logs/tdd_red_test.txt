@@ -1,0 +1,5 @@
+TDD red phase
+Command: python3 -m unittest discover -s research/uc_failure_study/tests -v
+Result: expected failure before implementation
+Failure: ModuleNotFoundError: No module named 'study_io'
+The inspection tests were then implemented and rerun successfully under the documented environment.

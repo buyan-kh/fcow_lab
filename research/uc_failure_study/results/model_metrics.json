@@ -1,0 +1,92 @@
+{
+  "independent_replication": "not run; no independent cohort was included in GSE14580",
+  "metrics": {
+    "decision_tree_depth_2": {
+      "accuracy": 0.6666666666666666,
+      "balanced_accuracy": 0.625,
+      "roc_auc": 0.625
+    },
+    "logistic_regression": {
+      "accuracy": 0.6666666666666666,
+      "balanced_accuracy": 0.5,
+      "roc_auc": 0.625
+    },
+    "majority_baseline": {
+      "accuracy": 0.6666666666666666,
+      "balanced_accuracy": 0.5,
+      "roc_auc": 0.5
+    }
+  },
+  "split": {
+    "seed": 7,
+    "test_fraction": 0.25,
+    "test_patients": [
+      "UCNR14",
+      "UCNR16",
+      "UCNR8",
+      "UCNR9",
+      "UCR3",
+      "UCR7"
+    ],
+    "train_patients": [
+      "UCNR1",
+      "UCNR10",
+      "UCNR11",
+      "UCNR12",
+      "UCNR13",
+      "UCNR15",
+      "UCNR2",
+      "UCNR3",
+      "UCNR4",
+      "UCNR5",
+      "UCNR6",
+      "UCNR7",
+      "UCR1",
+      "UCR2",
+      "UCR4",
+      "UCR5",
+      "UCR6",
+      "UCR8"
+    ]
+  },
+  "test_counts": {
+    "nonresponder": 4,
+    "responder": 2
+  },
+  "top_training_probe_effects": [
+    {
+      "nonresponder_mean": 18.016667,
+      "probe_id": "220353_at",
+      "responder_mean": 60.316667,
+      "standardized_difference": 3.16584
+    },
+    {
+      "nonresponder_mean": 18.391667,
+      "probe_id": "1564175_at",
+      "responder_mean": 46.116667,
+      "standardized_difference": 2.944248
+    },
+    {
+      "nonresponder_mean": 6.341667,
+      "probe_id": "231454_at",
+      "responder_mean": 27.183333,
+      "standardized_difference": 2.853722
+    },
+    {
+      "nonresponder_mean": 27.966667,
+      "probe_id": "1563621_at",
+      "responder_mean": 46.066667,
+      "standardized_difference": 2.632536
+    },
+    {
+      "nonresponder_mean": 432.883333,
+      "probe_id": "234312_s_at",
+      "responder_mean": 820.633333,
+      "standardized_difference": 2.563784
+    }
+  ],
+  "train_counts": {
+    "nonresponder": 12,
+    "responder": 6
+  }
+}

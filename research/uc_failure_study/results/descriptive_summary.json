@@ -1,0 +1,12 @@
+{
+  "dataset": "GSE14580",
+  "groups": {
+    "nonresponder": 16,
+    "responder": 8,
+    "unknown_or_unusable": 6
+  },
+  "matrix_missing_values": 0,
+  "matrix_probes": 54675,
+  "matrix_samples": 30,
+  "uc_baseline_records": 24
+}

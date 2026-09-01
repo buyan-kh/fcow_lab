@@ -37,3 +37,7 @@ next-env.d.ts
 /outputs/
 /work/
 /.superpowers/
+
+# public study downloads and generated Python bytecode
+/research/uc_failure_study/results/source_data/
+__pycache__/

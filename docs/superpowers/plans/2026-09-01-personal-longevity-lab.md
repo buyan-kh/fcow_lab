@@ -18,11 +18,11 @@
 - Create: `lib/lab/analysis.ts`
 - Test: `lib/lab/analysis.test.ts`
 
-- [ ] Define goal, metric, baseline, experiment, check-in, and report types.
-- [ ] Add deterministic synthetic profile and caffeine-cutoff experiment fixtures.
-- [ ] Add pure report/trend helpers and tests for stable averages and status copy.
-- [ ] Run `npm test -- lib/lab/analysis.test.ts` and verify it passes.
-- [ ] Commit with `feat: add personal lab domain fixtures`.
+- [x] Define goal, metric, baseline, experiment, check-in, and report types.
+- [x] Add deterministic synthetic profile and caffeine-cutoff experiment fixtures.
+- [x] Add pure report/trend helpers and tests for stable averages and status copy.
+- [x] Run `npm test -- lib/lab/analysis.test.ts` and verify it passes.
+- [x] Commit with `feat: add personal lab domain fixtures`.
 
 ### Task 2: Build the default personal-lab workspace
 
@@ -31,20 +31,20 @@
 - Modify: `app/page.tsx`
 - Modify: `app/globals.css`
 
-- [ ] Render safety copy, local-only data boundary, goal selection, baseline, experiment, check-in, trends, and report states.
-- [ ] Use shadcn Button, Card, Badge, and Input primitives.
-- [ ] Add local state transitions and no fetch/XHR calls.
-- [ ] Link Company mode as a secondary mode.
-- [ ] Run lint and build; fix only actual failures.
-- [ ] Commit with `feat: make personal lab the default workspace`.
+- [x] Render safety copy, local-only data boundary, goal selection, baseline, experiment, check-in, trends, and report states.
+- [x] Use shadcn Button, Card, Badge, and Input primitives.
+- [x] Add local state transitions and no fetch/XHR calls.
+- [x] Link Company mode as a secondary mode.
+- [x] Run lint and build; fix only actual failures.
+- [x] Commit with `feat: make personal lab the default workspace`.
 
 ### Task 3: Verify the complete local flow
 
 **Files:**
 - Modify: `docs/product_reset.md` if needed to reflect the implemented boundary.
 
-- [ ] Run the full test suite.
-- [ ] Run lint and production build.
-- [ ] Start the development server and manually walk every state in the browser.
-- [ ] Confirm the source tree contains no network calls in `components/lab` or `lib/lab`.
-- [ ] Commit documentation or verification-only changes.
+- [x] Run the full test suite.
+- [x] Run lint and production build.
+- [x] Start the development server and manually walk every state in the browser.
+- [x] Confirm the source tree contains no network calls in `components/lab` or `lib/lab`.
+- [x] Commit documentation or verification-only changes.

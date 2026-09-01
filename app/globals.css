@@ -1958,3 +1958,14 @@ body { background: #f4f6f8; color: #131820; }
 .research-node { border-color: rgba(19, 24, 32, .24); border-top-color: #2457d6; background: #f4f6f8; }.research-report-preview { background: #f4f6f8; border-color: rgba(19, 24, 32, .24); }.research-report-preview pre { color: #131820; }
 .research-shell [data-slot='button'][data-variant='default'], .company-mode-shell [data-slot='button'][data-variant='default'] { background: #2457d6; color: #f4f6f8; }.research-shell [data-slot='button'][data-variant='outline'], .company-mode-shell [data-slot='button'][data-variant='outline'] { border-color: rgba(19, 24, 32, .24); background: #f4f6f8; color: #131820; }.research-shell [data-slot='button'][data-variant='secondary'] { background: #131820; color: #f4f6f8; }
 .research-demo-preview span, .research-two-col span, .research-table th, .workspace-kicker { color: #131820; text-transform: none; }
+
+/* Remove decorative AI-style color slabs and rails: hierarchy comes from type,
+ * spacing, and a single action color instead of tinted cards. */
+.research-safety-banner { display: block; border: 0; border-top: 1px solid rgba(19, 24, 32, .14); border-bottom: 1px solid rgba(19, 24, 32, .14); border-radius: 0; background: transparent; padding: 18px 0; }
+.research-safety-banner > span { display: block; max-width: none; margin-top: 7px; text-align: left; }
+.research-import-note { border: 0; border-top: 1px solid rgba(19, 24, 32, .14); border-radius: 0; background: transparent; padding: 20px 0 0; }
+.research-import-note code { background: transparent; padding: 0; color: #131820; }
+.research-step { border-left: 0; padding-left: 0; }.research-step-active { border-left: 0; background: transparent; color: #131820; font-weight: 700; }
+.research-eyebrow { color: #131820; font-weight: 650; letter-spacing: 0; text-transform: none; }
+.research-gap, .research-alert, .research-alert-error { border: 0; border-top: 1px solid rgba(19, 24, 32, .14); border-radius: 0; background: transparent; padding-inline: 0; }
+.research-import-card, .research-therapeutic-card { border-top: 0; }

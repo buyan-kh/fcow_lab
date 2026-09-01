@@ -87,7 +87,33 @@ Every claim carries one label: Verified source, Synthetic benchmark fixture, Inf
 - Modify: app/globals.css — restrained light shadcn styling; no rails, tinted cards, gradients, or decorative accent bars.
 - Create: docs/ax014_discovery_engine_boundary.md — company and physical-loop boundary.
 - Create: docs/ax014_program_selection.md — disease/modality decision record.
+- Create: docs/ax014_uc_competitive_patent_audit.md — candidate-only UC treatment, pipeline, response-gap, and patent screen.
 - Modify: docs/product_reset.md — remove wellness-first definition.
+
+### Task 0: Complete candidate diligence before building disease-specific screens
+
+**Files:**
+- Create: docs/ax014_uc_competitive_patent_audit.md
+- Modify: docs/ax014_program_selection.md
+
+- [ ] **Step 1: Inventory approved UC treatment classes and active late-stage programs.** Use current AGA/ACG guidance and ClinicalTrials.gov records. Record mechanism, modality, prior-treatment population, endpoint, sponsor, status, and source URL. Treat regional approval differences explicitly.
+
+- [ ] **Step 2: Map response failures and underserved populations.** Start with objectively active, advanced-therapy-exposed UC after adequate exposure. Record primary nonresponse, secondary loss of response, biomarker limitations, and colectomy or hospitalization signals. Mark all causal explanations as inference until replicated.
+
+- [ ] **Step 3: Run a preliminary patent screen.** Search USPTO, Google Patents, and WIPO by target, modality, composition, use, biomarker, and patient-subgroup terms. Record publication number, assignee, priority date, legal-status caveat, claim theme, and source URL. State clearly that this is not freedom-to-operate advice.
+
+- [ ] **Step 4: Define at least three competing mechanism hypotheses.** Compare immune-pathway escape, epithelial repair/barrier failure, and cell-state or tissue-context mismatch. Do not select a target until each hypothesis has evidence, conflicts, missing data, and a falsifier.
+
+- [ ] **Step 5: Design the cheapest decision-quality experiment.** Specify human-relevant model, controls, readouts, cost range to be quoted by a legitimate CRO or academic lab, timeline, and kill criteria. Require consent, biosafety, and institutional oversight for human-derived material.
+
+- [ ] **Step 6: Gate the program.** UC remains a candidate unless the audit identifies a reproducible subgroup, differentiated mechanism, executable falsifier, preliminary patent strategy, and believable path to a development candidate. Do not build UC-specific production screens before this gate is approved.
+
+- [ ] **Step 7: Commit the diligence artifact.**
+
+```bash
+git add docs/ax014_uc_competitive_patent_audit.md docs/ax014_program_selection.md
+git commit -m "docs: audit ulcerative colitis candidate"
+```
 
 ### Task 1: Define the discovery-case contract and decision gate
 
